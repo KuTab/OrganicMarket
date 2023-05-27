@@ -1,21 +1,33 @@
-//
-//  ContentView.swift
-//  OrganicMarket
-//
-//  Created by Egor Dadugin on 18.04.2023.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var viewModel = LoginViewModel()
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        if !viewModel.registered {
+            RegistrationView(viewModel: viewModel)
+        } else if !viewModel.loggedIn {
+            LoginView(viewModel: viewModel)
+        } else {
+            ZStack(alignment: .topTrailing) {
+                switch viewModel.isSupplier {
+                case false:
+                    ShopTabView()
+                case true:
+                    FarmerTabView()
+                }
+//                Button {
+//                    //viewModel.registered = false
+//                    viewModel.loggedIn = false
+//                } label: {
+//                    Image(systemName: "arrowshape.turn.up.backward.fill")
+//                        .foregroundColor(.white)
+//                        .frame(minWidth: 50, minHeight: 50)
+//                        .background(.red)
+//                        .clipShape(Circle())
+//                }
+//                .padding()
+            }
         }
-        .padding()
     }
 }
 

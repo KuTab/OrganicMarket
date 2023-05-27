@@ -1,14 +1,13 @@
-//
-//  OrganicMarketApp.swift
-//  OrganicMarket
-//
-//  Created by Egor Dadugin on 18.04.2023.
-//
-
 import SwiftUI
+import Firebase
 
 @main
 struct OrganicMarketApp: App {
+    
+    init() {
+        FirebaseApp.configure()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
