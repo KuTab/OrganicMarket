@@ -3,6 +3,8 @@ import Combine
 
 class UserEditingViewModel: ObservableObject {
     @Published var user: UserEditing
+    var updatePublisher: PassthroughSubject<Void, Never>?
+    var errorPublisher: PassthroughSubject<String, Never>?
     var cancellables: Set<AnyCancellable> = .init()
     
     func saveUpdates() {
@@ -25,15 +27,21 @@ class UserEditingViewModel: ObservableObject {
                     case .failure(let error):
                         print("update user error: \(error)")
                     }
-                } receiveValue: { response in
-                    print(response.data)
+                } receiveValue: { [weak self] response in
+                    if response.success {
+                        self?.updatePublisher?.send()
+                    } else {
+                        self?.errorPublisher?.send(response.message)
+                    }
                 }.store(in: &cancellables)
             
         } catch {
         }
     }
     
-    init(user: User) {
+    init(user: User, updatePublisher: PassthroughSubject<Void, Never>?, errorPublisher: PassthroughSubject<String, Never>?) {
         self.user = .init(user: user)
+        self.updatePublisher = updatePublisher
+        self.errorPublisher = errorPublisher
     }
 }

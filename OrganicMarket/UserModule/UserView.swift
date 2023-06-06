@@ -68,18 +68,31 @@ struct UserView: View {
                                     Text(user.address)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .padding(.horizontal)
+                                    
+                                    Text("Описание:")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 6)
+                                    
+                                    Text(user.description)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.horizontal)
                                 }
                             case .feedback:
                                 ForEach(viewModel.supplierFeedbacks, id: \.self) { feedback in
                                     VStack(alignment: .leading) {
-                                        FiveStarInfoView(rating: feedback.rate)
-                                            .padding()
-                                        Text(feedback.timeStamp)
-                                            .frame(maxWidth: .infinity)
-                                            .padding()
-                                        Text(feedback.feedback)
-                                            .frame(maxWidth: .infinity)
-                                            .padding()
+                                        HStack {
+                                            FiveStarInfoView(rating: feedback.rate)
+                                                .padding()
+                                            Text(formatTimeStamp(date: feedback.timeStamp))
+                                                .frame(maxWidth: .infinity)
+                                                .padding()
+                                        }
+                                        HStack {
+                                            Text(feedback.feedback)
+                                                .frame(maxWidth: .infinity)
+                                                .padding()
+                                        }
                                     }.frame(minHeight: 65)
                                         .background {
                                             Color(.white)
@@ -110,15 +123,27 @@ struct UserView: View {
                     isEditing = false
                     viewModel.fetchUser()
                 } content: {
-                    UserEditingView(viewModel: .init(user: user), isShowed: $isEditing)
+                    UserEditingView(viewModel: .init(user: user, updatePublisher: viewModel.updatePublisher, errorPublisher: viewModel.errorPublisher), isShowed: $isEditing)
                         .presentationDetents([.fraction(0.85)])
                 }
-
             }
             
         }.onAppear {
             viewModel.fetchUser()
         }
+        .alert(isPresented: $viewModel.errorShowed) {
+            Alert(title: Text("Ошибка"), message: Text(viewModel.message), dismissButton: .default(Text("Ок")))
+        }
+    }
+    
+    private func formatTimeStamp(date: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        var newDate = date
+        newDate.removeLast()
+        let dateString = dateFormatter.date(from: newDate)!
+        dateFormatter.dateFormat = "dd-MM-yyy"
+        return dateFormatter.string(from: dateString)
     }
 }
 
@@ -129,5 +154,4 @@ struct UserView_Previews: PreviewProvider {
             viewModel.user = seedUser
         }
     }
-    
 }

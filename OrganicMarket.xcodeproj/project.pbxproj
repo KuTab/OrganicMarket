@@ -33,7 +33,6 @@
 		17ADE2952A1E9D4800E1B9B1 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 17ADE2942A1E9D4800E1B9B1 /* FirebaseFirestore */; };
 		17ADE2972A1E9D4800E1B9B1 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 17ADE2962A1E9D4800E1B9B1 /* FirebaseFirestoreSwift */; };
 		17ADE2992A1EA8E000E1B9B1 /* MessagesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17ADE2982A1EA8E000E1B9B1 /* MessagesManager.swift */; };
-		17ADE29B2A1EB34A00E1B9B1 /* DifferencesModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17ADE29A2A1EB34A00E1B9B1 /* DifferencesModule.swift */; };
 		17ADE29D2A1EB9FC00E1B9B1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 17ADE29C2A1EB9FB00E1B9B1 /* GoogleService-Info.plist */; };
 		17ADE29F2A1ED20A00E1B9B1 /* FarmerChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17ADE29E2A1ED20A00E1B9B1 /* FarmerChatListView.swift */; };
 		17ADE2A22A1ED22700E1B9B1 /* ChatListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17ADE2A12A1ED22700E1B9B1 /* ChatListViewModel.swift */; };
@@ -99,7 +98,6 @@
 		17ADE28D2A1E962A00E1B9B1 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		17ADE28F2A1E973100E1B9B1 /* MessageField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageField.swift; sourceTree = "<group>"; };
 		17ADE2982A1EA8E000E1B9B1 /* MessagesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesManager.swift; sourceTree = "<group>"; };
-		17ADE29A2A1EB34A00E1B9B1 /* DifferencesModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DifferencesModule.swift; sourceTree = "<group>"; };
 		17ADE29C2A1EB9FB00E1B9B1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		17ADE29E2A1ED20A00E1B9B1 /* FarmerChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmerChatListView.swift; sourceTree = "<group>"; };
 		17ADE2A12A1ED22700E1B9B1 /* ChatListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewModel.swift; sourceTree = "<group>"; };
@@ -397,7 +395,6 @@
 				17F46A5A29EEE1B80048FB0F /* Assets.xcassets */,
 				17F46A5C29EEE1B80048FB0F /* Preview Content */,
 				17ADE28D2A1E962A00E1B9B1 /* Extensions.swift */,
-				17ADE29A2A1EB34A00E1B9B1 /* DifferencesModule.swift */,
 			);
 			path = OrganicMarket;
 			sourceTree = "<group>";
@@ -499,7 +496,6 @@
 				17DAB8AD2A16823F00EF1DD4 /* ProductFeedback.swift in Sources */,
 				17DAB8B62A1BB20200EF1DD4 /* FiveStarView.swift in Sources */,
 				17DAB8B12A16E18600EF1DD4 /* ProductViewViewModel.swift in Sources */,
-				17ADE29B2A1EB34A00E1B9B1 /* DifferencesModule.swift in Sources */,
 				17ADE29F2A1ED20A00E1B9B1 /* FarmerChatListView.swift in Sources */,
 				17DAB8B82A1BB67900EF1DD4 /* FiveStarInfoView.swift in Sources */,
 				173C1B3A29F7DFF30023CE9A /* AddProductViewModel.swift in Sources */,
@@ -680,6 +676,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = OrganicMarket/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -711,6 +708,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = OrganicMarket/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

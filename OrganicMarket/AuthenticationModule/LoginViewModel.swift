@@ -15,7 +15,7 @@ class LoginViewModel: ObservableObject {
     
     func register() {
         do {
-            let body = try JSONEncoder().encode(RegisterModel(email: self.email, password: self.password, isSupplier: self.isSupplier))
+            let body = try JSONEncoder().encode(RegisterModel(email: self.email, password: self.password, name: self.name, surname: self.surname, isSupplier: self.isSupplier))
             let object = try JSONSerialization.jsonObject(with: body)
             
             let publisher: AnyPublisher<ServerResponse<LoginDto>, Error> = NetworkService.doRequest(
@@ -96,6 +96,8 @@ class LoginViewModel: ObservableObject {
     struct RegisterModel: Codable {
         let email: String
         let password: String
+        let name: String
+        let surname: String
         let isSupplier: Bool
     }
     

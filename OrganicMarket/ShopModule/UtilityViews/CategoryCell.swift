@@ -10,8 +10,15 @@ import SwiftUI
 struct CategoryCell: View {
     var category: String
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
+        ZStack(alignment: .topLeading) {
+            Image("CategoryImage")
+                .resizable()
+                .aspectRatio(1, contentMode: .fill)
             Text(category)
+                .foregroundColor(.black)
+                .bold()
+                .padding()
+                .padding(.leading)
         }
     }
 }

@@ -5,6 +5,8 @@ class ShopViewModel: ObservableObject {
     @Published var products: [Product] = []
     @Published var cart: [CartProduct] = []
     @Published var differenceProducts: [Product?] = []
+    @Published var allertShowing: Bool = false
+    var allertMessage: String = ""
     var cancellables = Set<AnyCancellable>()
     var cartObserver: PassthroughSubject<Product, Never> = .init()
     var differenceObserver: PassthroughSubject<Product, Never> = .init()
@@ -12,12 +14,26 @@ class ShopViewModel: ObservableObject {
     
     init() {
         cartObserver.sink { [weak self] product in
-            self?.cart.append(.init(product: product, num: self?.cart.count ?? 0))
+               if let index = self?.cart.firstIndex(where: { cartProduct in
+                    cartProduct.product.id == product.id
+               }) {
+                   self?.cart[index].addNum()
+               } else {
+                   self?.cart.append(.init(product: product, num: 1))
+               }
             print(self?.cart)
         }.store(in: &cancellables)
         
-        cartEraser.sink { [weak self] num in
-            self?.cart.removeAll { $0.num == num }
+        cartEraser.sink { [weak self] id in
+            if let index = self?.cart.firstIndex(where: { cartProduct in
+                cartProduct.product.id == id
+            }) {
+                self?.cart[index].decreaseNum()
+                if self?.cart[index].num == 0 {
+                    self?.cart.remove(at: index)
+                }
+            }
+//            self?.cart.removeAll { $0.num == num }
         }.store(in: &cancellables)
         
         differenceObserver.sink { [weak self] product in
@@ -51,7 +67,9 @@ class ShopViewModel: ObservableObject {
         do {
             var order = CreateOrder()
             for product in cart {
-                order.products.append(ProductOrder(productId: product.product.id))
+                for _ in 1...product.num {
+                    order.products.append(ProductOrder(productId: product.product.id))
+                }
             }
             let body = try JSONEncoder().encode(order)
             let object = try JSONSerialization.jsonObject(with: body)
@@ -73,6 +91,9 @@ class ShopViewModel: ObservableObject {
                 } receiveValue: { [weak self] response in
                     if response.success {
                         self?.cart = []
+                    } else {
+                        self?.allertMessage = response.message
+                        self?.allertShowing = true
                     }
                 }.store(in: &cancellables)
         }
@@ -84,6 +105,19 @@ class ShopViewModel: ObservableObject {
             self.differenceProducts.append(product)
         } else {
             print("В сравнении больше двух продуктов")
+        }
+    }
+    
+    func totalSum() -> NSString {
+        var sum: Double = 0
+        for product in cart {
+            sum += product.product.price * Double(product.num)
+        }
+        if modf(sum).1 > 0 {
+            return NSString(string: String(sum))
+        }
+        else {
+            return NSString(format: "%.0f", sum)
         }
     }
 }

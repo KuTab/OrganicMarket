@@ -18,7 +18,9 @@ struct LoginView: View {
                     .textInputAutocapitalization(.never)
             }.padding()
             
-            Text("Нет профиля? Регистрация").onTapGesture {
+            Text("Нет профиля? Регистрация")
+                .foregroundColor(.blue)
+                .onTapGesture {
                 viewModel.registered = false
             }
             
@@ -26,7 +28,8 @@ struct LoginView: View {
                 viewModel.login()
             } label: {
                 Text("Войти")
-            }.buttonStyle(.borderedProminent)
+            }.disabled(viewModel.email.isEmpty || viewModel.password.isEmpty)
+            .buttonStyle(.borderedProminent)
 
         }.alert(isPresented: $viewModel.showAllert) {
             Alert(title: Text("Ошибка"), message: Text(viewModel.message), dismissButton: .default(Text("Ок")))

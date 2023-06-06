@@ -21,6 +21,7 @@ struct CategoriesView: View {
                                     .frame(minWidth: 170, maxWidth: .infinity, minHeight: 200, maxHeight: .infinity)
                                     .background(.gray.opacity(0.2))
                                     .cornerRadius(20)
+                                    .shadow(color: .black.opacity(0.3), radius: 3)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 10)
                             }.foregroundColor(.black)

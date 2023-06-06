@@ -13,9 +13,13 @@ struct DifferenceView: View {
                 .padding(.horizontal, 20)
             
             if viewModel.differenceProducts.isEmpty {
-                Text("Нет товаров для сравнения")
-                    .frame(alignment: .leading)
-                    .opacity(0.5)
+                Spacer()
+                VStack {
+                    Text("Нет товаров для сравнения")
+                        .frame(maxWidth:. infinity, alignment: .center)
+                        .opacity(0.5)
+                }
+                Spacer()
             }
             
             
@@ -100,13 +104,13 @@ struct CharacteristicsView: View {
             DifferenceRow<String>(header: "Производитель", leftItem: getFullName(name: leftProduct?.supplier.name, surname: leftProduct?.supplier.surname), rightItem: getFullName(name: rightProduct?.supplier.name, surname: rightProduct?.supplier.surname))
                 .frame(maxWidth: .infinity, minHeight: 110, maxHeight: .infinity)
                 .padding()
-            DifferenceRow<Double>(header: "Цена", leftItem: leftProduct?.price, rightItem: rightProduct?.price)
+            DifferenceRow<String>(header: "Цена", leftItem: String(leftProduct?.price ?? 0) + " руб.", rightItem: String(rightProduct?.price ?? 0) + " руб.")
                 .frame(maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
                 .padding()
             DifferenceRow<Double>(header: "Рейтинг", leftItem: leftProduct?.rating, rightItem: rightProduct?.rating, forRating: true)
                 .frame(maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
                 .padding()
-            DifferenceRow<Double>(header: "Вес/Объем", leftItem: leftProduct?.weight, rightItem: rightProduct?.weight)
+            DifferenceRow<String>(header: "Вес/Объем", leftItem: String(leftProduct?.weight ?? 0) + (leftProduct?.getMetric() ?? ""), rightItem: String(rightProduct?.weight ?? 0) + (rightProduct?.getMetric() ?? ""))
                 .frame(maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
                 .padding()
             DifferenceRow<String>(header: "Состав", leftItem: leftProduct?.composition, rightItem: rightProduct?.composition)

@@ -22,7 +22,19 @@ struct ProductView: View {
             ZStack(alignment: .topLeading) {
                 ScrollView(.vertical) {
                     StickyHeader {
-                        Color(.red)
+                        //Color(.red)
+                        if product.image.isEmpty {
+                            Color(.red)
+                        } else {
+                            if let data = Data(base64Encoded: product.image) {
+                                let uiImage = UIImage(data: data)
+                                Image(uiImage: uiImage!)
+                                    .resizable()
+                                    .aspectRatio(1, contentMode: .fill)
+                            } else {
+                                Color(.red)
+                            }
+                        }
                     }
                     
                     VStack {
@@ -34,14 +46,21 @@ struct ProductView: View {
                                 .padding()
                             Spacer()
                             
-                            Text(String(product.price) + " руб.")
-                                .padding()
+                            Text("\(formatPrice(price: product.price)) руб.")
+                                .font(.caption)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 10)
+                                .foregroundColor(.white)
+                                .background {
+                                    Color.red
+                                }.clipShape(Capsule())
+                                .padding(.horizontal)
                         }
                         
                         //MARK: - View Рейтинга
                         HStack {
                             OneStarView(rating: product.rating)
-                            Text(String(product.rating))
+                            Text(String(format: "%.1f", product.rating))
                                 .font(.system(size: 24))
                                 .bold()
                                 .foregroundColor(.gray)
@@ -65,10 +84,17 @@ struct ProductView: View {
                         switch selection {
                             //MARK: - View общей информации
                         case .info:
+                            Text("В наличии:")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal)
+                            Text(String(product.quantity) + " шт.")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal)
+                                .padding(.vertical, 5)
                             Text("Описание:")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal)
-                            Text(product.description)
+                            Text(product.getDescription())
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal)
                                 .padding(.vertical, 5)
@@ -106,10 +132,10 @@ struct ProductView: View {
                                     .padding(.vertical, 5)
                                 Divider()
                                 
-                                Text("Вес:")
+                                Text("Вес/Объем:")
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.horizontal)
-                                Text(String(product.weight) + "г.")
+                                Text(String(product.weight) + " " + product.getMetric())
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.horizontal)
                                     .padding(.vertical, 5)
@@ -139,7 +165,21 @@ struct ProductView: View {
                             
                             //MARK: - View отзывов
                         case .feedback:
-                            Text("Отзывы")
+                            if(!farmerInitiated) {
+                                Button {
+                                    feedbackIsShowed = true
+                                } label: {
+                                    Text("Оставить отзыв")
+                                        .font(.system(size: 20))
+                                        .bold()
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity, minHeight: 60)
+                                        .background(.green)
+                                        .clipShape(Capsule())
+                                        .padding()
+                                }
+                            }
+                            
                             ForEach(viewModel.productFeedbacks, id: \.self) { feedback in
                                 VStack(alignment: .leading) {
                                     HStack {
@@ -161,13 +201,6 @@ struct ProductView: View {
                                     .cornerRadius(20)
                                     .shadow(color: .black.opacity(0.3), radius: 8)
                                     .padding()
-                            }
-                            if(!farmerInitiated) {
-                                Button {
-                                    feedbackIsShowed = true
-                                } label: {
-                                    Text("Оставить отзыв")
-                                }.buttonStyle(.bordered)
                             }
                         }
                         
@@ -194,7 +227,7 @@ struct ProductView: View {
             }
         }.toolbar(.hidden)
             .sheet(isPresented: $feedbackIsShowed) {
-                FeedbackView(viewModel: .init(feedbackType: .forProduct), isShowed: $feedbackIsShowed, objectId: product.id)
+                FeedbackView(viewModel: .init(feedbackType: .forProduct, updateFeedback: viewModel.updateFeedback), isShowed: $feedbackIsShowed, objectId: product.id)
                     .presentationDetents([.fraction(0.5)])
             }
     }
@@ -207,6 +240,15 @@ struct ProductView: View {
         let dateString = dateFormatter.date(from: newDate)!
         dateFormatter.dateFormat = "dd-MM-yyy"
         return dateFormatter.string(from: dateString)
+    }
+    
+    private func formatPrice(price: Double) -> NSString {
+        if modf(price).1 > 0 {
+            return NSString(string: String(price))
+        }
+        else {
+            return NSString(format: "%.0f", price)
+        }
     }
 }
 

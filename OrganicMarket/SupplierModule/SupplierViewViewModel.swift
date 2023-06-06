@@ -11,7 +11,17 @@ import Combine
 class SupplierViewViewModel: ObservableObject {
     @Published var supplierFeedbacks: [SupplierFeedback] = []
     var supplierId: Int
+    var updateFeedback: PassthroughSubject<Void, Never> = .init()
     var cancellables: Set<AnyCancellable> = .init()
+    
+    init(supplierId: Int) {
+        self.supplierId = supplierId
+        
+        updateFeedback.receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.fetchFeedback()
+            }.store(in: &cancellables)
+    }
     
     func fetchFeedback() {
         let token = UserDefaults.standard.value(forKey: "token") as? String ?? ""
@@ -30,14 +40,10 @@ class SupplierViewViewModel: ObservableObject {
                         print("get supplierFeedback error: \(error)")
                     }
                 } receiveValue: { response in
-                    self.supplierFeedbacks = response.data ?? []
+                    self.supplierFeedbacks = response.data?.reversed() ?? []
                 }.store(in: &cancellables)
             
         } catch {
         }
-    }
-    
-    init(supplierId: Int) {
-        self.supplierId = supplierId
     }
 }

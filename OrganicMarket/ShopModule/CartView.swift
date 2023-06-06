@@ -5,13 +5,28 @@ struct CartView: View {
     var columns = [GridItem(.flexible()), GridItem(.flexible())]
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Корзина")
-                .font(.system(size: 30))
-                .bold()
-                .padding(.horizontal, 20)
+            HStack {
+                Text("Корзина")
+                    .font(.system(size: 30))
+                    .bold()
+                    .padding(.horizontal, 20)
+                
+                Spacer()
+                
+                Text("\(viewModel.totalSum()) руб.")
+                    .font(.caption)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 10)
+                    .foregroundColor(.white)
+                    .background {
+                        Color.red
+                    }.clipShape(Capsule())
+                    .padding()
+                
+            }
             ScrollView {
                 LazyVGrid(columns: columns) {
-                    ForEach(viewModel.cart, id: \.self.num) { product in
+                    ForEach(viewModel.cart, id: \.self) { product in
                         ProductCell(product: product.product, eraser: viewModel.cartEraser, deleting: true, num: product.num)
                             .frame(minWidth: 170, maxWidth: .infinity, minHeight: 200, maxHeight: .infinity)
                             .background(.white)
@@ -37,6 +52,9 @@ struct CartView: View {
                 .bold()
                 .foregroundColor(.white)
             }.disabled(viewModel.cart.isEmpty)
+        }
+        .alert(isPresented: $viewModel.allertShowing) {
+            Alert(title: Text("Ошибка"), message: Text(viewModel.allertMessage), dismissButton: .default(Text("Ок")))
         }
     }
 }

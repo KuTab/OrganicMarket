@@ -19,7 +19,7 @@ struct MessageBubble: View {
             }
             
             if showTime {
-                Text("\(message.timestamp.formatted(.dateTime.hour().minute()))")
+                Text(formatDate(date: message.timestamp))
                     .font(.caption2)
                     .foregroundColor(.gray)
                     .padding(message.receiverId != senderId ? .leading : .trailing)
@@ -28,6 +28,12 @@ struct MessageBubble: View {
         }.frame(maxWidth: .infinity, alignment: message.receiverId != senderId ? .leading : .trailing)
             .padding(message.receiverId != senderId ? .leading : .trailing)
             .padding(.horizontal, 10)
+    }
+    
+    private func formatDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        return dateFormatter.string(from: date)
     }
 }
 

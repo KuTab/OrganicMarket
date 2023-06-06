@@ -53,7 +53,7 @@ struct FeedbackView: View {
 
 struct FeedbackView_Previews: PreviewProvider {
     @State static var isShowed: Bool = true
-    @ObservedObject static var viewModel: FeedbackViewModel = .init(feedbackType: .forProduct)
+    @ObservedObject static var viewModel: FeedbackViewModel = .init(feedbackType: .forProduct, updateFeedback: .init())
     static var previews: some View {
         FeedbackView(viewModel: viewModel, isShowed: $isShowed, objectId: 0)
     }

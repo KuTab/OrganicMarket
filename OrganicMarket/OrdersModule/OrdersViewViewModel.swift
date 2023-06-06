@@ -22,7 +22,7 @@ class OrdersViewViewModel: ObservableObject {
                         print("get user orders: \(error)")
                     }
                 } receiveValue: { [weak self] response in
-                    self?.orders = response.data ?? []
+                    self?.orders = response.data?.reversed() ?? []
                 }.store(in: &cancellables)
             
         } catch {
@@ -46,7 +46,7 @@ class OrdersViewViewModel: ObservableObject {
                         print("get supplier orders error: \(error)")
                     }
                 } receiveValue: { [weak self] response in
-                    self?.orders = response.data ?? []
+                    self?.orders = response.data?.reversed() ?? []
                 }.store(in: &cancellables)
             
         } catch {

@@ -12,9 +12,31 @@ struct ProductCell: View {
     var body: some View {
         VStack {
             ZStack(alignment: .topTrailing) {
-                Image("OrganicImage")
-                    .resizable()
-                    .aspectRatio(1, contentMode: .fill)
+                if product.image.isEmpty {
+                    Image("OrganicImage")
+                        .resizable()
+                        .aspectRatio(1, contentMode: .fill)
+                } else {
+                    if let data = Data(base64Encoded: product.image) {
+                        let uiImage = UIImage(data: data)
+                        Image(uiImage: uiImage!)
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fill)
+                    } else {
+                        Image("OrganicImage")
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fill)
+                    }
+                }
+                
+                if let num = num {
+                    Text(String(num))
+                        .frame(minWidth: 30, minHeight: 30)
+                        .foregroundColor(.white)
+                        .background(.green)
+                        .clipShape(Circle())
+                        .padding()
+                }
                 
                 if let sender = differenceSender {
                     Button {
@@ -71,7 +93,7 @@ struct ProductCell: View {
                 
                 if let eraser = eraser {
                     Button {
-                        eraser.send(num!)
+                        eraser.send(product.id)
                     } label: {
                         Image(systemName: "trash.fill")
                             .foregroundColor(.white)
@@ -83,7 +105,7 @@ struct ProductCell: View {
                 
                 if let adder = adder {
                     Button {
-                        adder.send(1)
+                        adder.send(product.id)
                     } label: {
                         Image(systemName: "plus")
                             .foregroundColor(.white)
@@ -112,6 +134,6 @@ struct ProductCell_Previews: PreviewProvider {
     static var sender: PassthroughSubject<Product, Never> = .init()
     static var differenceSender: PassthroughSubject<Product, Never> = .init()
     static var previews: some View {
-        ProductCell(product: seedProduct, sender: sender, differenceSender: differenceSender)
+        ProductCell(product: seedProduct, sender: sender, differenceSender: differenceSender, num: 2)
     }
 }

@@ -32,7 +32,7 @@ struct SupplierView: View {
                         HStack {
                             OneStarView(rating: user.rating)
                             
-                            Text(String(user.rating))
+                            Text(String(format: "%.1f", user.rating))
                                 .font(.system(size: 24))
                                 .bold()
                                 .foregroundColor(.gray)
@@ -59,10 +59,24 @@ struct SupplierView: View {
                             Text("Описание:")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal)
-                            
+                            Text(user.description)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal)
                             //MARK: - View отзывов
                         case .feedback:
-                            Text("Отзывы")
+                            Button {
+                                feedbackIsShowed = true
+                            } label: {
+                                Text("Оставить отзыв")
+                                    .font(.system(size: 20))
+                                    .bold()
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity, minHeight: 60)
+                                    .background(.green)
+                                    .clipShape(Capsule())
+                                    .padding()
+                            }
+                            
                             ForEach(viewModel.supplierFeedbacks, id: \.self) { feedback in
                                 VStack(alignment: .leading) {
                                     HStack {
@@ -85,11 +99,6 @@ struct SupplierView: View {
                                     .shadow(color: .black.opacity(0.3), radius: 8)
                                     .padding()
                             }
-                            Button {
-                                feedbackIsShowed = true
-                            } label: {
-                                Text("Оставить отзыв")
-                            }.buttonStyle(.bordered)
                         }
                         
                     }.frame(maxWidth: .infinity)
@@ -129,7 +138,7 @@ struct SupplierView: View {
             }
         }.toolbar(.hidden)
             .sheet(isPresented: $feedbackIsShowed) {
-                FeedbackView(viewModel: .init(feedbackType: .forSupplier), isShowed: $feedbackIsShowed, objectId: user.id)
+                FeedbackView(viewModel: .init(feedbackType: .forSupplier, updateFeedback: viewModel.updateFeedback), isShowed: $feedbackIsShowed, objectId: user.id)
                     .presentationDetents([.fraction(0.5)]).onAppear {
                         print(viewModel.supplierFeedbacks)
                     }.onDisappear {

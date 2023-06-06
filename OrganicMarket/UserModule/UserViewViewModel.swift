@@ -1,17 +1,27 @@
-//
-//  UserViewViewModel.swift
-//  OrganicMarket
-//
-//  Created by Egor Dadugin on 23.05.2023.
-//
-
 import Foundation
 import Combine
 
 class UserViewViewModel: ObservableObject {
     @Published var user: User?
     @Published var supplierFeedbacks: [SupplierFeedback] = []
+    var updatePublisher: PassthroughSubject<Void, Never> = .init()
+    var errorPublisher: PassthroughSubject<String, Never> = .init()
+    @Published var errorShowed: Bool = false
+    @Published var message: String = ""
     var cancellables: Set<AnyCancellable> = .init()
+    
+    init() {
+        updatePublisher.receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+            self?.fetchUser()
+            }.store(in: &cancellables)
+        
+        errorPublisher.receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                self?.message = message
+                self?.errorShowed = true
+            }.store(in: &cancellables)
+    }
     
     func fetchUser() {
         let token = UserDefaults.standard.value(forKey: "token") as? String ?? ""
@@ -30,7 +40,7 @@ class UserViewViewModel: ObservableObject {
                         print("get user error: \(error)")
                     }
                 } receiveValue: { [weak self] response in
-                    self?.user = response.data ?? .init(id: -1, email: "", isSupplier: false, rating: 5.0, address: "Test address", phone: "Test phone", name: "Test name", surname: "Test Surname")
+                    self?.user = response.data ?? .init(id: -1, email: "", isSupplier: false, rating: 5.0, address: "Test address", phone: "Test phone", name: "Test name", description: "Test description", surname: "Test Surname")
                     self?.fetchFeedback()
                 }.store(in: &cancellables)
             
@@ -55,7 +65,7 @@ class UserViewViewModel: ObservableObject {
                         print("get supplierFeedback error: \(error)")
                     }
                 } receiveValue: { response in
-                    self.supplierFeedbacks = response.data ?? []
+                    self.supplierFeedbacks = response.data?.reversed() ?? []
                 }.store(in: &cancellables)
             
         } catch {

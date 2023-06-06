@@ -1,16 +1,18 @@
 import SwiftUI
 import Combine
+import PhotosUI
 
 struct AddProductView: View {
     @Binding var isShowed: Bool
     var updatePublisher: PassthroughSubject<Void, Never>?
     @ObservedObject var viewModel = AddProductViewModel()
+    var columns = [GridItem(.flexible()), GridItem(.flexible())]
     var body: some View {
         VStack(alignment: .leading) {
-                Text("Продать продукт")
-                    .font(.system(size: 24))
-                    .bold()
-                    .padding()
+            Text("Продать продукт")
+                .font(.system(size: 24))
+                .bold()
+                .padding()
             ScrollView {
                 VStack(alignment: .leading) {
                     Text("Название")
@@ -26,8 +28,23 @@ struct AddProductView: View {
                 }.padding()
                 
                 VStack(alignment: .leading) {
-                    Text("Вес")
-                    TextField("Вес", value: $viewModel.weight, format: .number)
+                    Text("Вес/Объем")
+                    HStack {
+                        TextField("Вес/Объем", value: $viewModel.weight, format: .number)
+                            .keyboardType(.numberPad)
+                            .textFieldStyle(.roundedBorder)
+                        
+                        Picker("", selection: $viewModel.metric) {
+                            ForEach(viewModel.metrics, id: \.self) { metric in
+                                Text(metric)
+                            }
+                        }
+                    }
+                }.padding()
+                
+                VStack(alignment: .leading) {
+                    Text("Количество")
+                    TextField("Количество", value: $viewModel.quantity, format: .number)
                         .keyboardType(.numberPad)
                         .textFieldStyle(.roundedBorder)
                 }.padding()
@@ -41,8 +58,26 @@ struct AddProductView: View {
                 
                 VStack(alignment: .leading) {
                     Text("Категория")
-                    TextField("Категроия", text: $viewModel.category)
-                        .textFieldStyle(.roundedBorder)
+                    ScrollView(.horizontal) {
+                        LazyHStack {
+                            ForEach(viewModel.categories, id: \.self) { category in
+                                Text(category)
+                                    .padding(.horizontal)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity, minHeight: 30, maxHeight: 40)
+                                    .background {
+                                        viewModel.category == category ? Color.green : Color.gray.opacity(0.65)
+                                    }.clipShape(Capsule())
+                                    .padding(.horizontal, 1)
+                                    .padding(.vertical, 2)
+                                    .onTapGesture {
+                                        withAnimation {
+                                            viewModel.category = category
+                                        }
+                                    }
+                            }
+                        }
+                    }.scrollIndicators(.hidden)
                 }.padding()
                 
                 VStack(alignment: .leading) {
@@ -54,9 +89,10 @@ struct AddProductView: View {
                 }.padding()
                 
                 VStack(alignment: .leading) {
-                    Text("Срок годности")
-                    TextField("Срок годности", text: $viewModel.expiration)
-                        .textFieldStyle(.roundedBorder)
+                    DatePicker(selection: $viewModel.expirationDate, displayedComponents: .date) {
+                        Text("Cрок годности")
+                    }.pickerStyle(.menu)
+                        .environment(\.locale, Locale.init(identifier: "ru"))
                 }.padding()
                 
                 VStack(alignment: .leading) {
@@ -65,6 +101,10 @@ struct AddProductView: View {
                         .frame(maxWidth: .infinity, minHeight: 200)
                         .shadow(radius: 0.5)
                 }.padding()
+                
+                PhotosPicker(selection: $viewModel.photoItem) {
+                    Text("Приложите фото")
+                }
             }
             
             Button {
@@ -79,9 +119,19 @@ struct AddProductView: View {
                     .background(.green)
                     .clipShape(Capsule())
                     .padding()
+            }.disabled(viewModel.title.isEmpty || viewModel.price <= 0 || viewModel.weight <= 0 || viewModel.description.isEmpty || viewModel.category.isEmpty || viewModel.quantity <= 0 || viewModel.storageCondition.isEmpty || viewModel.composition.isEmpty)
+        }
+        .onAppear {
+            viewModel.fetchCategories()
+        }
+        .onChange(of: viewModel.photoItem) { newItem in
+            Task {
+                if let data = try await newItem?.loadTransferable(type: Data.self) {
+                    viewModel.photo = data.base64EncodedString()
+                    print("Photo \(viewModel.photo)")
+                }
             }
         }
-
     }
 }
 

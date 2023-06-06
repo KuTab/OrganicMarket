@@ -11,11 +11,13 @@ class FeedbackViewModel: ObservableObject {
     @Published var feedback: String = feedbackPlaceholder
     @Published var rate: Int = 0
     @Published var isShowed = true
+    var updateFeedback: PassthroughSubject<Void, Never>?
     var feedbackType: FeedbackType
     var cancellables: Set<AnyCancellable> = .init()
     
-    public init(feedbackType: FeedbackType) {
+    public init(feedbackType: FeedbackType, updateFeedback: PassthroughSubject<Void, Never>) {
         self.feedbackType = feedbackType
+        self.updateFeedback = updateFeedback
     }
     
     func sendProductFeedback(productId: Int) {
@@ -42,8 +44,9 @@ class FeedbackViewModel: ObservableObject {
                     case .failure(let error):
                         print("productFeedback error: \(error)")
                     }
-                } receiveValue: { response in
+                } receiveValue: { [weak self] response in
                     print(response)
+                    self?.updateFeedback?.send()
                 }.store(in: &cancellables)
             
         } catch {
@@ -75,8 +78,9 @@ class FeedbackViewModel: ObservableObject {
                     case .failure(let error):
                         print("supplierFeedback error: \(error)")
                     }
-                } receiveValue: { response in
+                } receiveValue: { [weak self] response in
                     print(response)
+                    self?.updateFeedback?.send()
                 }.store(in: &cancellables)
             
         } catch {

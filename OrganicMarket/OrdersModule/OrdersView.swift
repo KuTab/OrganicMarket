@@ -22,7 +22,7 @@ struct OrdersView: View {
                         ForEach(viewModel.orders, id: \.self) { order in
                             if(ownerRole == .supplier) {
                                 VStack(alignment: .center) {
-                                    OrderRow(order: order)
+                                    OrderRow(order: order, farmerInitiated: true)
                                         .frame(maxWidth:.infinity, minHeight: 200, maxHeight: .infinity)
                                         .padding()
                                     NavigationLink(destination: ChatView(messagesManager: .init(senderId: order.userId, chatId: nil), name: order.userName)){
@@ -41,7 +41,7 @@ struct OrdersView: View {
                                     }.tint(.black)
                                 }
                             } else {
-                                OrderRow(order: order)
+                                OrderRow(order: order, farmerInitiated: false)
                                     .frame(maxWidth:.infinity, minHeight: 200, maxHeight: .infinity)
                                     .padding()
                             }
